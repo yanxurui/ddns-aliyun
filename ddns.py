@@ -3,7 +3,7 @@
 import json, os, logging, socket
 import aliyun
 import logger
-import ipv4, ipv6
+import ip
 
 global LocalIPV4
 LocalIPV4 = ''
@@ -51,16 +51,14 @@ def get_locat_ip(domain, ipv6=False):
 def get_ipv4():
     global LocalIPV4
     if LocalIPV4.strip() == '':
-        v4 = ipv4.IPV4()
-        LocalIPV4 = v4.get_local_ip()
+        LocalIPV4 = ip.IPV4.get_local_ip()
     return LocalIPV4
 
 
 def get_ipv6():
     global LocalIPV6
     if LocalIPV6.strip() == '':
-        v6 = ipv6.IPV6()
-        LocalIPV6 = v6.get_local_ip()
+        LocalIPV6 = ip.IPV6.get_local_ip()
     return LocalIPV6
 
 
@@ -76,5 +74,5 @@ if __name__ == '__main__':
             init_domain(aliyun_client, domain)
             ddns(aliyun_client, domain)
     except Exception as e:
-        logging.error(e)
+        logging.exception(e)
         pass
