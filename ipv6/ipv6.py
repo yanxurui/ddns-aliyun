@@ -4,6 +4,8 @@ import ipv6
 import logging
 import logger
 
+from collections import defaultdict
+
 class IPV6(object):
     Headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -14,7 +16,7 @@ class IPV6(object):
     def __init_subclass__(cls):  # 一旦创建这个类的子类，就会触发此方法
         super().__init_subclass__()
 
-    def get_ip(ipDict):
+    def get_ip():
         pass
     
     def get_local_ip(self):
@@ -22,14 +24,16 @@ class IPV6(object):
             logging.info("No functions are registered for ipv6")
             return
 
-        ipDict = dict()
+        ipDict = defaultdict(int)
         for chi in IPV6.__subclasses__():
             try:
-                chi.get_ip(ipDict)
+                ip = chi.get_ip()
+                if ip:
+                    ipDict[ip.strip()] += 1
             except Exception as e:
                 logging.error(e)
                 pass
-        
+
         if ipDict.__len__() == 0:
             logging.info("Local machine has not ipv6.")
             return

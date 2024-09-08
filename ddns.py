@@ -20,10 +20,12 @@ def init_domain(aliyun_client, domain):
 def ddns(aliyun_client, domain):
     record_type = 'AAAA' if domain.__contains__('ipv6') and domain['ipv6'] else 'A'
     if record_type == 'AAAA' and socket.has_dualstack_ipv6 == False:
-        logging.error(f"Local machine has not ipv6.")
+        logging.error("Local machine does not have ipv6.")
         return
     
-    ip = get_locat_ip(domain)
+    ip = get_locat_ip(domain, record_type=='AAAA')
+    logging.info(f"Local ip is {ip}")
+
     if ip is None or ip == '':
         return
     
@@ -31,14 +33,16 @@ def ddns(aliyun_client, domain):
         record_value = aliyun_client.get_record_value(domain['name'], sub_domain, record_type)
         if record_value == 0:
             aliyun_client.add_record(domain['name'], sub_domain, record_type, ip)
-        elif record_value != ip:
-            logging.info(f"Begin update [{sub_domain}.{domain['name']}].")
+        elif record_value == ip:
+            logging.info(f"No need to update the {record_type} record of {sub_domain}.{domain['name']}")
+        else:
+            logging.info(f"Updating the {record_type} record of {sub_domain}.{domain['name']} to {ip}")
             record_id = aliyun_client.get_record_id(domain['name'], sub_domain, record_type)
             aliyun_client.record_ddns(record_id, sub_domain, record_type, ip)
 
 
-def get_locat_ip(domain):
-    if domain.__contains__('ipv6') and domain['ipv6']:
+def get_locat_ip(domain, ipv6=False):
+    if ipv6:
         return get_ipv6()
     else:
         return get_ipv4()

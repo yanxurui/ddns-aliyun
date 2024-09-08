@@ -63,7 +63,7 @@ class Aliyun():
             records = data['DomainRecords']['Record']
             for record in records:
                 if record['Type'] == record_type and record['RR'] == sub_domain:
-                    logging.info(f"Sub_Domain [{sub_domain}] hostIP is {record['Value']}")
+                    logging.info(f"The {record_type} record of {sub_domain}.{domain_name} is {record['Value']}")
                     return record['Value']
             return 0
         except Exception as e:

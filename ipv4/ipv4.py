@@ -4,6 +4,8 @@ import ipv4
 import logging
 import logger
 
+from collections import defaultdict
+
 class IPV4(object):
     Headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -14,25 +16,26 @@ class IPV4(object):
     def __init_subclass__(cls):  # 一旦创建这个类的子类，就会触发此方法
         super().__init_subclass__()
 
-    def get_ip(ipDict):
+    def get_ip():
         pass
-        # logging.error("No functions are registered for ipv4")
     
     def get_local_ip(self):
         if IPV4.__subclasses__().__len__() == 0:
             logging.info("No functions are registered for ipv4")
             return
 
-        ipDict = dict()
+        ipDict = defaultdict(int)
         for chi in IPV4.__subclasses__():
             try:
-                chi.get_ip(ipDict)
+                ip = chi.get_ip()
+                if ip:
+                    ipDict[ip.strip()] += 1
             except Exception as e:
                 logging.error(e)
                 pass
 
         if ipDict.__len__() == 0:
-            logging.info("Local machine has not ipv4.")
+            logging.info("Local machine does not have ipv4.")
             return
         LocalIP = sorted(ipDict.items(), key=lambda d:d[1], reverse = True)[0][0]
         return LocalIP
