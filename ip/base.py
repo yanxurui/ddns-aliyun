@@ -20,6 +20,7 @@ class IP(object):
             try:
                 ip = sub.get_ip()
                 if ip:
+                    logging.info(f"{sub.__name__} found ip {ip}")
                     ipDict[ip.strip()] += 1
             except Exception as e:
                 logging.exception(e)

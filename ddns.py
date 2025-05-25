@@ -6,23 +6,20 @@ import logger
 import ip
 
 global LocalIPV4
-LocalIPV4 = ''
+LocalIPV4 = None
 
 global LocalIPV6
-LocalIPV6 = ''
+LocalIPV6 = None
 
 def init_domain(aliyun_client, domain):
     domain_exists = aliyun_client.check_domain_exists(domain['name'])
-    if domain_exists == False:
+    if not domain_exists:
         aliyun_client.create_domain(domain['name'])
 
 
 def ddns(aliyun_client, domain):
     record_type = 'AAAA' if domain.__contains__('ipv6') and domain['ipv6'] else 'A'
-    if record_type == 'AAAA' and socket.has_dualstack_ipv6 == False:
-        logging.error("Local machine does not have ipv6.")
-        return
-    
+
     ip = get_locat_ip(domain, record_type=='AAAA')
     logging.info(f"Local ip is {ip}")
 
@@ -50,15 +47,23 @@ def get_locat_ip(domain, ipv6=False):
 
 def get_ipv4():
     global LocalIPV4
-    if LocalIPV4.strip() == '':
+    if not LocalIPV4:
         LocalIPV4 = ip.IPV4.get_local_ip()
+    if '.' not in LocalIPV4:
+        return
     return LocalIPV4
 
 
 def get_ipv6():
+    if socket.has_dualstack_ipv6 == False:
+        logging.error("Local machine does not have ipv6.")
+        return
+
     global LocalIPV6
-    if LocalIPV6.strip() == '':
+    if not LocalIPV6:
         LocalIPV6 = ip.IPV6.get_local_ip()
+    if ':' not in LocalIPV6:
+        return
     return LocalIPV6
 
 
