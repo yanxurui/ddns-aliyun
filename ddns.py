@@ -68,6 +68,7 @@ def get_ipv6():
 
 
 if __name__ == '__main__':
+    logging.info(f"starting ddns.py, pid: {os.getpid()}")
     try:
         logger.setup_logging()
         conf = json.load(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "conf.json"), "r"))
