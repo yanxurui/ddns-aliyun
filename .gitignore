@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
+
+# Local credentials
+conf.json
 
 # C extensions
 *.so
